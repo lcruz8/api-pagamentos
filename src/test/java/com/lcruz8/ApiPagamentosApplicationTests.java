@@ -1,4 +1,4 @@
-package com.lcruz8.apipagamentos;
+package com.lcruz8;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
