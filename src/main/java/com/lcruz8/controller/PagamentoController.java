@@ -1,7 +1,10 @@
 package com.lcruz8.controller;
 
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+
 import java.util.List;
 
 import org.springframework.web.bind.annotation.RestController;
@@ -21,5 +24,11 @@ public class PagamentoController {
     public List<Pagamento> list() {
         return pagamentoRepository.findAll();
     }
+    
+    @PostMapping
+    public Pagamento create(@RequestBody Pagamento pagamento) {
+        return pagamentoRepository.save(pagamento);
+    }
+
 }
 
