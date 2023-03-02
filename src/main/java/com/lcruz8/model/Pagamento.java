@@ -30,4 +30,6 @@ public class Pagamento {
     @Column(name = "valor", nullable = false, precision = 2)
     private double valor;
     
+    @Column(name = "status", nullable = false)
+    private String status;
 }
