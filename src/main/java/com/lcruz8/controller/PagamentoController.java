@@ -2,12 +2,10 @@ package com.lcruz8.controller;
 
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -17,7 +15,7 @@ import java.util.List;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.lcruz8.model.Pagamento;
-import com.lcruz8.repository.PagamentoRepository;
+import com.lcruz8.service.PagamentoService;
 
 import lombok.AllArgsConstructor;
 
@@ -25,51 +23,28 @@ import lombok.AllArgsConstructor;
 @RequestMapping("/api/pagamentos")
 @AllArgsConstructor
 public class PagamentoController {
-    private final PagamentoRepository pagamentoRepository;
-    private final String PENDENTE = "PENDENTE";
-    private final String FALHA = "FALHA";
+    
+    private final PagamentoService pagamentoService;
 
     @GetMapping
-    public List<Pagamento> list() {
-        return pagamentoRepository.findAll();
+    public List<Pagamento> listPagamento(@RequestBody Pagamento pagamento) {
+        return pagamentoService.list(pagamento);
     }
     
     @PostMapping
     @ResponseStatus(code = HttpStatus.CREATED)
-    public Pagamento create(@RequestBody Pagamento pagamento) {
-        return pagamentoRepository.save(pagamento);
+    public Pagamento createPagamento(@RequestBody Pagamento pagamento) {
+        return pagamentoService.create(pagamento);
     }
+    
     @PutMapping()
-    public ResponseEntity<Pagamento> update(@RequestBody Pagamento pagamento) {
-        return pagamentoRepository.findById(pagamento.getId())
-                .map(registro -> {
-
-                    if( (registro.getStatus().equals(PENDENTE) && !pagamento.getStatus().equals(PENDENTE)) ||
-                        (registro.getStatus().equals(FALHA) && pagamento.getStatus().equals(PENDENTE)) ) {
-
-                        registro.setStatus(pagamento.getStatus());
-                        Pagamento updated = pagamentoRepository.save(registro);
-
-                        return ResponseEntity.ok().body(updated);
-                    } 
-
-                    return ResponseEntity.ok().body(registro);
-                })
-                .orElse(ResponseEntity.notFound().build());
+    public ResponseEntity<Pagamento> updatePagamento(@RequestBody Pagamento pagamento) {
+        return pagamentoService.update(pagamento);
     }
 
     @DeleteMapping()
-    public ResponseEntity<Void> delete(@RequestBody Pagamento pagamento) {
-
-        return pagamentoRepository.findById(pagamento.getId())
-                .map(registro -> {
-                    
-                    if(registro.getStatus().equals(PENDENTE))
-                        pagamentoRepository.deleteById(pagamento.getId());
-
-                    return ResponseEntity.noContent().<Void>build();
-                })
-                .orElse(ResponseEntity.notFound().build());
+    public ResponseEntity<Void> deletePagamento(@RequestBody Pagamento pagamento) {
+        return pagamentoService.delete(pagamento);
     }
 
 }
